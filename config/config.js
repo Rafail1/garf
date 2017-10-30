@@ -17,9 +17,9 @@ module.exports = {
 
 const DateFormats = {
     short: "DD MMMM - YYYY",
-    long: "dddd DD.MM.YYYY HH:mm"
+    long: "DD.MM.YYYY HH:mm"
 };
 Handlebars.registerHelper('formatDate', function (date, format) {
-    const mmnt = moment(date);
+    const mmnt = moment(date).utcOffset(+3, true);
     return mmnt.format(DateFormats[format]);
 });
