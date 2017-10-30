@@ -188,8 +188,7 @@ router.get('/sms/:taskId', needsGroup('user'), function (req, res, next) {
 
 });
 router.get('/', needsGroup('user'), function (req, res, next) {
-    Task.paginate({}, { page: 1, limit: 10, sort: { date: -1 } }, function(err, result) {
-        console.log(result.docs);
+    Task.paginate({}, { page: 1, limit: 10, sort: { _id: -1 } }, function(err, result) {
         res.render('garfield/index', { title: 'Garfield', arrSms: result.docs });
     });
 
