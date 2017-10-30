@@ -8,7 +8,7 @@ module.exports = {
         return __dirname + `/../uploads/${user._id}`;
     },
     mongodb: {
-        uri: "mongodb://localhost:27017/test"
+        uri: "mongodb://localhost:27017/garf"
     },
     session: {
         secret:'rafa'
