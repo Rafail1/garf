@@ -163,6 +163,9 @@ router.get('/sms/:taskId', needsGroup('user'), function (req, res, next) {
                         }
                         const dir = config.UPLOAD_DIR(req.user);
                         const fileDir = `${dir}/${task._id}`;
+                        if (!fs.existsSync(fileDir)) {
+                            fs.mkdirSync(fileDir);
+                        }
                         const filePath = `${fileDir}/resultSms.xlsx`;
                         workbook.xlsx.writeFile(filePath)
                             .then(function() {
