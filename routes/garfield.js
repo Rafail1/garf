@@ -119,6 +119,12 @@ router.get('/sms/:taskId', needsGroup('user'), function (req, res, next) {
         const oid = new mongoose.Types.ObjectId(req.params.taskId);
         Task.findById(oid, function (err, task) {
             if(task && task.result) {
+                const dir = config.UPLOAD_DIR(req.user);
+                const fileDir = `${dir}/${task._id}`;
+                const filePath = `${fileDir}/resultSms.xlsx`;
+                if (fs.existsSync(filePath)) {
+                    return res.download(filePath);
+                }
                 MyExcel.findById(task.result, function (err, excel) {
                     if(excel && excel.records) {
                         const curiersSheet = excel.records.shift();
@@ -161,12 +167,7 @@ router.get('/sms/:taskId', needsGroup('user'), function (req, res, next) {
                                 }
                             });
                         }
-                        const dir = config.UPLOAD_DIR(req.user);
-                        const fileDir = `${dir}/${task._id}`;
-                        if (!fs.existsSync(fileDir)) {
-                            fs.mkdirSync(fileDir);
-                        }
-                        const filePath = `${fileDir}/resultSms.xlsx`;
+
                         workbook.xlsx.writeFile(filePath)
                             .then(function() {
                                 res.download(filePath);
