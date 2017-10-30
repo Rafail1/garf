@@ -1,0 +1,31 @@
+{{#if user}}
+    <h1>{{title}}</h1>
+    <form method="post" action="/garfield/addFiles" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td><label>файл_который_генерирует_муравьиная</label></td>
+                <td><input type="file" name="drive_path" placeholder="файл_который_генерирует_муравьиная"></td>
+            </tr>
+            <tr>
+                <td><label>Исходный_файл</label></td>
+                <td><input type="file" name="orders" placeholder="Исходный_файл"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button>Submit</button></td>
+            </tr>
+        </table>
+    </form>
+{{/if}}
+{{#if arrSms}}
+    <h2>SMS</h2>
+    <ul>
+        {{#each arrSms}}
+            <li>
+                <a href="/garfield/sms/{{this._id}}">{{formatDate this.created "long"}}</a>
+            </li>
+            {{firstName}} {{lastName}}
+        {{/each}}
+    </ul>
+{{/if}}
+

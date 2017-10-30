@@ -1,0 +1,10 @@
+<h1>{{title}}</h1>
+{{#if user}}
+    {{user.username}}
+    <a href="/logout">Logout</a>
+    <a href="/garfield">Garfield</a>
+{{else}}
+    <a href="/login">Login</a>
+    <br/>
+    <a href="/register">Register</a>
+{{/if}}
