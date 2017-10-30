@@ -20,6 +20,6 @@ const DateFormats = {
     long: "DD.MM.YYYY HH:mm"
 };
 Handlebars.registerHelper('formatDate', function (date, format) {
-    const mmnt = moment(date).utcOffset(+3, true);
+    const mmnt = moment(date).utcOffset(3);
     return mmnt.format(DateFormats[format]);
 });
