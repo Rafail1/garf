@@ -109,7 +109,6 @@ router.get('/tasks', needsGroup('user'), function (req, res, next) {
     })
 });
 router.get('/sms/:taskId', needsGroup('user'), function (req, res, next) {
-    console.log(req.params.taskId);
     const result = [];
 
     const tpl = '{Name}, Ваш заказ у курьера, его привезет {Kurer} с 18:30 до 22:00, тел. {numberKurer}. Сумма к оплате: {Summ} руб. С уважением, зоомагазин Garfield.by';
@@ -185,7 +184,7 @@ router.get('/sms/:taskId', needsGroup('user'), function (req, res, next) {
 
 });
 router.get('/', needsGroup('user'), function (req, res, next) {
-    Task.paginate({}, { page: 1, limit: 10 }, function(err, result) {
+    Task.paginate({}, { page: 1, limit: 10, sort: { date: -1 } }, function(err, result) {
         console.log(result.docs);
         res.render('garfield/index', { title: 'Garfield', arrSms: result.docs });
     });
