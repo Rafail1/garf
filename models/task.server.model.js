@@ -35,8 +35,10 @@ TaskSchema.methods.process = function(filePath) {
             }
         }
         const NumberD = 0;
+        const NumberO = 0;
         const PhoneCurierD = 12;
         for(const i in _that.curiers.records[0]) {
+            let orderN = 1;
             resultShared[i] = _that.curiers.records[0][i];
             if(i == 0) {
                 continue;
@@ -49,11 +51,13 @@ TaskSchema.methods.process = function(filePath) {
                     const rowsFromOrder = PhonesMap[curierSheet[j][PhoneCurierD].trim()];
                     if(rowsFromOrder && rowsFromOrder.length) {
                         rowsFromOrder.forEach(function (rowNum) {
+                            _that.orders.records[0][rowNum][NumberO] = orderN++;
                             do {
                                 resSheet[resSheet.length] = _that.orders.records[0][rowNum];
                                 rowNum++;
-                                if(typeof _that.orders.records[0][rowNum] == 'undefined' ||
-                                    (typeof _that.orders.records[0][rowNum][PhoneOrderD] != 'undefined' && _that.orders.records[0][rowNum][PhoneOrderD].trim().length)) {
+                                if(typeof _that.orders.records[0][rowNum] === 'undefined' ||
+                                    (typeof _that.orders.records[0][rowNum][PhoneOrderD] !== 'undefined' &&
+                                        _that.orders.records[0][rowNum][PhoneOrderD].trim().length)) {
                                     break;
                                 }
                             } while(true)
@@ -81,7 +85,7 @@ TaskSchema.methods.process = function(filePath) {
 
         resultWorkbook.save(filePath);
 
-        var workbook = new ExcelRaw.Workbook();
+        const workbook = new ExcelRaw.Workbook();
         const sheets = [];
         workbook.xlsx.readFile(filePath)
             .then(function() {
@@ -101,7 +105,12 @@ TaskSchema.methods.process = function(filePath) {
                         ];
                         worksheet.eachRow(function (row, rowNumber) {
                             row.height = 29;
-                            row.eachCell(function (cell, rowNumber) {
+                            row.eachCell(function (cell, colNumber) {
+                                if(cell.value === 'итого') {
+                                    console.log(cell);
+                                    row.getCell(colNumber+1).font = {bold: true};
+                                    cell.font = {bold: true};
+                                }
                                 cell.alignment = {wrapText: true};
                             });
                         });
