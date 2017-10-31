@@ -11,7 +11,7 @@ const TaskSchema = new Schema({
     drivePath: {type: Schema.Types.ObjectId, ref: 'Excel'},
     orders: {type: Schema.Types.ObjectId, ref: 'Excel'},
     result: {type: Schema.Types.ObjectId, ref: 'Excel'},
-    created: {type: Date, default: Date.now()}
+    created: {type: Date, default: Date.now}
 });
 TaskSchema.plugin(mongoosePaginate);
 
