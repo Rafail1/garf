@@ -46,7 +46,7 @@ TaskSchema.methods.process = function(filePath) {
             const curierSheet =_that.drivePath.records[_that.curiers.records[0][i][NumberD] - 1];
             for(const j in curierSheet) {
                 if(j > 0 && curierSheet[j][PhoneCurierD] && curierSheet[j][PhoneCurierD].trim().length) {
-                    const rowsFromOrder = PhonesMap[curierSheet[j][PhoneCurierD]];
+                    const rowsFromOrder = PhonesMap[curierSheet[j][PhoneCurierD].trim()];
                     if(rowsFromOrder && rowsFromOrder.length) {
                         rowsFromOrder.forEach(function (rowNum) {
                             do {
