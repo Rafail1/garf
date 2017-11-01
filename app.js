@@ -1,5 +1,5 @@
-var express = require('express');
-var path = require('path');
+const express = require('express');
+const path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
@@ -13,9 +13,9 @@ var LocalStrategy = require('passport-local').Strategy;
 var redis   = require("redis");
 var session = require('express-session');
 var redisStore = require('connect-redis')(session);
-var client  = redis.createClient();
+const client = redis.createClient();
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,9 +27,10 @@ app.set('view engine', 'hbs');
 app.use(session({
     secret: config.session.secret,
     // create new redis store.
-    store: new redisStore({ host: 'localhost', port: 6379, client: client,ttl :  260}),
+    store: new redisStore({ host: 'localhost', port: 6379, client: client, disableTTL: true}),
     saveUninitialized: false,
-    resave: false
+    resave: true,
+    cookie: { maxAge: 60000 * 3600 }
 }));
 
 

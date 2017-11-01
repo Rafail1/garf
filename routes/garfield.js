@@ -104,7 +104,6 @@ router.post('/addFiles', needsGroup('user'), fileUpload(), function (req, res) {
 
 router.get('/tasks', needsGroup('user'), function (req, res, next) {
     Task.find({}, function (err, tasks) {
-        console.log(err, tasks);
         res.json(tasks);
     })
 });
@@ -133,8 +132,8 @@ router.get('/sms/:taskId', needsGroup('user'), function (req, res, next) {
                             const row = curiersSheet[i];
                             curiers.push({name:row[1], phone:row[3]});
                         }
-                        var workbook = new ExcelRaw.Workbook();
-                        var sheet = workbook.addWorksheet('My Sheet');
+                        const workbook = new ExcelRaw.Workbook();
+                        const sheet = workbook.addWorksheet('My Sheet');
                         for(let i = 0; i < excel.records.length; i++) {
                             const curier = curiers[i];
                             if(!curier) {
@@ -160,7 +159,8 @@ router.get('/sms/:taskId', needsGroup('user'), function (req, res, next) {
                                     }
                                     order = [row[1].trim(),row[2].trim(),curier.name.trim(),0,curier.phone.trim(),utpl];
                                 }
-                                if(row[6] === 'итого') {
+                                if(row[6] && typeof row[6] !== 'undefined'
+                                    && row[6].trim().toLowerCase() === 'итого') {
                                     order[3] = row[7];
                                     result.push(order);
                                     sheet.addRow(order)

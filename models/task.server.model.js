@@ -27,7 +27,7 @@ TaskSchema.methods.process = function(filePath) {
         for(const i in _that.orders.records[0]) {
             let n = _that.orders.records[0][i][PhoneOrderD];
             if(i > 0 && typeof n != 'undefined' && n.trim().length) {
-                n = n.trim();
+                n = n.trim().replace(new RegExp(/[^\d]*/, 'g'), '')
                 if(!PhonesMap[n]) {
                     PhonesMap[n] = [];
                 }
@@ -47,8 +47,8 @@ TaskSchema.methods.process = function(filePath) {
 
             const curierSheet =_that.drivePath.records[_that.curiers.records[0][i][NumberD] - 1];
             for(const j in curierSheet) {
-                if(j > 0 && curierSheet[j][PhoneCurierD] && curierSheet[j][PhoneCurierD].trim().length) {
-                    const rowsFromOrder = PhonesMap[curierSheet[j][PhoneCurierD].trim()];
+                if(j > 0 && curierSheet[j][PhoneCurierD] && numberize(curierSheet[j][PhoneCurierD]).length) {
+                    const rowsFromOrder = PhonesMap[numberize(curierSheet[j][PhoneCurierD])];
                     if(rowsFromOrder && rowsFromOrder.length) {
                         rowsFromOrder.forEach(function (rowNum) {
                             _that.orders.records[0][rowNum][NumberO] = orderN++;
@@ -57,12 +57,12 @@ TaskSchema.methods.process = function(filePath) {
                                 rowNum++;
                                 if(typeof _that.orders.records[0][rowNum] === 'undefined' ||
                                     (typeof _that.orders.records[0][rowNum][PhoneOrderD] !== 'undefined' &&
-                                        _that.orders.records[0][rowNum][PhoneOrderD].trim().length)) {
+                                        numberize(_that.orders.records[0][rowNum][PhoneOrderD]).length)) {
                                     break;
                                 }
                             } while(true)
                         })
-                    };
+                    }
 
                 }
             }
@@ -107,7 +107,6 @@ TaskSchema.methods.process = function(filePath) {
                             row.height = 29;
                             row.eachCell(function (cell, colNumber) {
                                 if(cell.value === 'итого') {
-                                    console.log(cell);
                                     row.getCell(colNumber+1).font = {bold: true};
                                     cell.font = {bold: true};
                                 }
@@ -134,6 +133,11 @@ TaskSchema.methods.process = function(filePath) {
     })
 
 };
-
+function numberize(str) {
+    if(str === null) {
+        str = '';
+    }
+    return str.trim().replace(new RegExp(/[^\d]*/, 'g'), '');
+}
 module.exports = mongoose.model('Task', TaskSchema);
 // mongoose.model('Task').collection.drop();
