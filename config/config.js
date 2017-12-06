@@ -4,7 +4,11 @@ module.exports = {
     /**
      * @return {string}
      */
-    UPLOAD_DIR: function (user) {
+    UPLOAD_DIR: __dirname + '/../uploads/',
+    /**
+     * @return {string}
+     */
+    USER_UPLOAD_DIR: function (user) {
         return __dirname + `/../uploads/${user._id}`;
     },
     mongodb: {

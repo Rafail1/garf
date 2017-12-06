@@ -17,14 +17,19 @@
         </table>
     </form>
 {{/if}}
-{{#if arrSms}}
+{{#if results}}
     <h2>SMS</h2>
     <ul>
-        {{#each arrSms}}
+        {{#each results}}
             <li>
-                <a href="/garfield/sms/{{this._id}}">{{formatDate this.created "long"}}</a>
+                <a href="/garfield/sms/{{this.sms._id}}">{{formatDate this.sms.created "long"}}</a>
             </li>
-            {{firstName}} {{lastName}}
+            <li>
+                <a href="/garfield/orders/{{this.order._id}}">{{formatDate this.orders.created "long"}}</a>
+            </li>
+            <li>
+                <a href="/garfield/result/{{this.task._id}}">{{formatDate this.task.created "long"}}</a>
+            </li>
         {{/each}}
     </ul>
 {{/if}}

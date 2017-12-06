@@ -3,6 +3,12 @@
 /**
  * Module dependencies.
  */
+var fs = require('fs');
+
+process.on('uncaughtException', (err) => {
+    console.error(err);
+    fs.appendFileSync(__dirname + '/errors.txt', `\nCaught exception: ${err}`);
+});
 os = require('os');
 os.tmpDir = os.tmpdir;
 
