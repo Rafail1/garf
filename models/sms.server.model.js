@@ -7,15 +7,39 @@ const mongoosePaginate = require('mongoose-paginate');
 const Handlebars = require("hbs");
 const ExcelJs = require('exceljs');
 const request = require('request');
+const apiUrl = 'https://userarea.sms-assistent.by/api/v1/json';
+
 const SmsSchema = new Schema({
     records: Array,
     sended: Boolean,
     created: {type: Date, default: Date.now}
 });
 SmsSchema.plugin(mongoosePaginate);
+SmsSchema.statics.getBalance = function () {
+    const _that = this;
+
+    return new Promise(function (resolve, reject) {
+        if (_that.sended) {
+            reject();
+        }
+        const data = {
+            login: "IvSetorg",
+            password: "7d28LpYn"
+
+        };
+        request({
+            url: `https://userarea.sms-assistent.by/api/v1/credits/plain?user=${data.login}&password=${data.password}`,
+            method: "GET",
+        }, function (err, answer) {
+            if (err) {
+                console.log(err)
+            }
+            return resolve(answer);
+        });
+    });
+}
 SmsSchema.methods.send = function () {
     const _that = this;
-    const url = 'https://userarea.sms-assistent.by/api/v1/json';
 
     return new Promise(function (resolve, reject) {
         if (_that.sended) {
@@ -45,7 +69,7 @@ SmsSchema.methods.send = function () {
                 "msg": messages.slice(24 * i, 24 * i + 24)
             };
             request({
-                url: url,
+                url: apiUrl,
                 method: "POST",
                 json: data
             }, function (err, answer) {
@@ -164,3 +188,4 @@ SmsSchema.statics.add = function (excel) {
 };
 
 module.exports = mongoose.model('Sms', SmsSchema);
+// mongoose.model('Sms').getBalance();
