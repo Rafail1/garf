@@ -20,6 +20,7 @@ module.exports = {
 };
 
 const DateFormats = {
+    time: "HH:mm",
     short: "DD MMMM - YYYY",
     long: "DD.MM.YYYY HH:mm"
 };

@@ -1,10 +1,13 @@
 var express = require('express');
+var mongoose = require('mongoose');
 var passport = require('passport');
 var Account = require('../models/account.server.model');
 var router = express.Router();
+var session = require('express-session');
+const needsGroup = require('./../middlewares/needGroups');
 
 
-router.get('/', function (req, res) {
+router.get('/', needsGroup('user', 'login'), function (req, res) {
     res.render('index');
 });
 
@@ -29,7 +32,10 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
-    res.redirect('/');
+    mongoose.model('Sms').getBalance().then(function (balance) {
+        req.session.balance = balance;
+        res.redirect('/');
+    })
 });
 
 router.get('/logout', function(req, res) {

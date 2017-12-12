@@ -1,10 +1,16 @@
-<h1>{{title}}</h1>
-{{#if user}}
-    {{user.username}}
-    <a href="/logout">Logout</a>
-    <a href="/garfield">Garfield</a>
-{{else}}
-    <a href="/login">Login</a>
-    <br/>
-    <!--a href="/register">Register</a-->
-{{/if}}
+<!-- services-list page -->
+<div class="cont">
+    <div class="services">
+        <ul class="services__list">
+            <!-- services-item -->
+            <li class="services__item">
+                <a href="/garfield" class="service">
+                    <div class="service__logo"></div>
+                    <span class="service__title">Логистический</span>
+                </a>
+            </li>
+            <!-- end -->
+        </ul>
+    </div>
+</div>
+<!-- end -->

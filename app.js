@@ -43,6 +43,7 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
     res.locals.user = req.user;
+    res.locals.session = req.session;
     next();
 });
 app.use('/', index);
@@ -59,7 +60,7 @@ passport.deserializeUser(Account.deserializeUser());
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
-  next(err);
+  res.render('404');
 });
 
 // error handler

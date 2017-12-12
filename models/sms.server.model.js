@@ -6,6 +6,7 @@ const fs = require('fs');
 const mongoosePaginate = require('mongoose-paginate');
 const Handlebars = require("hbs");
 const ExcelJs = require('exceljs');
+const Task = mongoose.model('Task');
 const request = require('request');
 const apiUrl = 'https://userarea.sms-assistent.by/api/v1/json';
 
@@ -34,7 +35,7 @@ SmsSchema.statics.getBalance = function () {
             if (err) {
                 console.log(err)
             }
-            return resolve(answer);
+            return resolve(answer.body);
         });
     });
 }
@@ -78,28 +79,29 @@ SmsSchema.methods.send = function () {
                 }
             });
         }
-        mongoose.model('Sms').findByIdAndUpdate(_that._id, { $set: {sended: true}}, function (err, res) {
+        mongoose.model('Sms').findByIdAndUpdate(_that._id, {$set: {sended: true}}, function (err, res) {
             console.log(err, res);
         });
         return resolve(answer);
     });
 };
 
-SmsSchema.statics.generateSmsExcel = function (id) {
+SmsSchema.statics.generateSmsExcel = function (req, taskId) {
     const _that = this;
     return new Promise(function (resolve, reject) {
-        _that.findById(id, function (err, sms) {
-            const fileDir = `${config.UPLOAD_DIR}/${sms._id}`;
+        Task.findById(taskId).populate('sms').exec(function (err, task) {
+            const sms = task.sms;
+            const fileDir = `${config.USER_UPLOAD_DIR(req.user)}/${taskId}`;
             if (!fs.existsSync(fileDir)) {
                 fs.mkdirSync(fileDir);
             }
             const filePath = `${fileDir}/resultSms.xlsx`;
-            if(fs.existsSync(filePath)) {
+            if (fs.existsSync(filePath)) {
                 return resolve(filePath);
             }
             const workbook = new ExcelJs.Workbook();
             const sheet = workbook.addWorksheet('My Sheet');
-            for(let i = 0; i < sms.records.length; i++) {
+            for (let i = 0; i < sms.records.length; i++) {
                 const row = sms.records[i];
                 let order = [
                     row['name'].trim(),
@@ -113,10 +115,11 @@ SmsSchema.statics.generateSmsExcel = function (id) {
             }
 
             workbook.xlsx.writeFile(filePath)
-                .then(function() {
+                .then(function () {
                     return resolve(filePath);
                 });
         })
+
     });
 };
 SmsSchema.statics.add = function (excel) {
@@ -166,7 +169,7 @@ SmsSchema.statics.add = function (excel) {
 
                     if (typeof row[ItogCell] === 'string' && row[ItogCell].trim().toLowerCase() === 'итого') {
                         const sumCellValue = row[SummCell];
-                        if(!MyHelper.numberize(sumCellValue).length) {
+                        if (MyHelper.numberize(sumCellValue).length) {
                             order['summ'] = sumCellValue;
                         }
                         order['message'] = template(order);
@@ -188,4 +191,4 @@ SmsSchema.statics.add = function (excel) {
 };
 
 module.exports = mongoose.model('Sms', SmsSchema);
-// mongoose.model('Sms').getBalance();
+// mongoose.model('Sms').collection.drop();

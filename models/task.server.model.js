@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const fs = require('fs');
 const Excel = mongoose.model('Excel');
 const MyHelper = require('./helper');
+const config = require('../config/config');
 const ExcelJs = require('exceljs');
 const mongoosePaginate = require('mongoose-paginate');
 const PhoneOrderD = 2;
@@ -181,6 +182,12 @@ TaskSchema.statics.add = function (dir, drive_path, orders, user) {
 }
 
 
+TaskSchema.statics.getResultOrdersFile = function (req, id) {
+    return `${config.USER_UPLOAD_DIR(req.user)}/${id}/${id}orders.xlsx`;
+}
+TaskSchema.statics.getResultFile = function (req, id) {
+    return `${config.USER_UPLOAD_DIR(req.user)}/${id}/result.xlsx`;
+}
 TaskSchema.methods.process = function (fileDir, fname) {
     const _that = this;
     const filePath = `${fileDir}/${fname}`;
@@ -243,7 +250,7 @@ TaskSchema.methods.process = function (fileDir, fname) {
 
             if (worksheet.name.trim().toLowerCase() !== allCuriersSheetName) {
                 const ordersSheet = ordersWorkbook.addWorksheet(worksheet.name, {
-                    pageSetup: {paperSize: 9, orientation: 'portrait'}
+                    pageSetup: {paperSize: 9, orientation: 'portrait', scale:80}
                 });
                 ordersSheet.pageSetup.printArea = 'A1:G20';
                 ordersSheet.columns = [

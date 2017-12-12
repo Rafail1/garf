@@ -1,10 +1,65 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <title>{{title}}</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    {{{body}}}
-  </body>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="app">
+    <div class="app__head cont">
+        <header class="header">
+            <div class="row align-items-end">
+                <div class="col-4">
+                    <div class="logo">
+                        <div class="logo__ico">
+
+                        </div>
+
+                        <div class="logo__desc">
+                            <span class="logo__title">Garfield</span>
+                            <span class="logo__capt">корпоративный портал</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="row justify-content-center">
+
+                        <!-- clock component -->
+                        <div class="clock">
+                            <span class="clock__time"></span>
+                            <span class="clock__date"></span>
+                        </div>
+                        <!-- end -->
+
+                    </div>
+                </div>
+
+                {{#if user}}
+                    <div class="col-4">
+
+                        <div class="row align-items-end">
+                            <div class="col-6">
+                                <span class="stat">Баланс: {{session.balance}}</span>
+                            </div>
+                            <div class="col-6 header__action">
+                                <span class="username">{{user.username}}</span>
+                                <a href="/logout" class="logout">выйти</a>
+                            </div>
+                        </div>
+                    </div>
+                {{/if}}
+            </div>
+        </header>
+    </div>
+    <div class="app__main">
+        {{{body}}}
+    </div>
+</div>
+<script src="/javascripts/clock.js" type="text/javascript" charset="utf-8" async defer></script>
+</body>
 </html>
+

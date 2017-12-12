@@ -1,10 +1,56 @@
-<h1>Login Page</h1>
-<p class="lead">Say something worthwhile here.</p>
-<br/>
-<form action="/login" method="post">
-    <input class="form-control" name="username" placeholder='Enter Username' />
-    <input class="form-control" type='password' name="password" placeholder='Password'/>
-    <button class="btn btn-default" type='submit'>Submit</button>
-</form>
-<a href='/'>Cancel</a>
+<!-- signin page -->
+<div class="signin">
+    <div class="cont">
+        <div class="row justify-content-center align-items-center">
+
+            <form action="/login" method="post" class="form-signin">
+                <div class="form-signin__head">
+                    <span class="form-signin__head-title">Авторизация</span>
+                    <span class="form-signin__head-desc">Пожалуйста, авторизируйтесь</span>
+                </div>
+
+                <div class="form-signin__group">
+                    <label for="inputLogin">Логин</label>
+                    <input class="form-control ok" type="text" name="username" id="inputLogin" required>
+                </div>
+
+                <div class="form-signin__group">
+                    <label for="inputPassword">Пароль</label>
+                    <input class="form-control er" type='password' name="password" id="inputPassword" required>
+                </div>
+
+                <div class="form-signin__group">
+                    <label class="form-signin__checkbox">
+                        <input type="checkbox" name="remember">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="9" height="9" viewBox="0 0 9 9">
+                                <defs>
+                                    <path id="a" d="M.003 8.54V0H7.63v8.54z"/>
+                                </defs>
+                                <g fill="none" fill-rule="evenodd" transform="translate(.695 .325)">
+                                    <mask id="b" fill="#fff">
+                                        <use xlink:href="#a"/>
+                                    </mask>
+                                    <path fill="#FFF" d="M2.539 8.543c1.651-3.09 3.32-5.77 5.09-7.991L7.09 0C5.552 1.652 3.805 4.258 2.489 6.394c-.62-.828-1.1-1.44-1.851-2.344L0 4.75c.76.991 1.814 2.548 2.539 3.792z" mask="url(#b)"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <span>Запомнить меня на этом устройстве</span>
+                    </label>
+                </div>
+
+                <div class="form-signin__submit">
+                    <button type="submit" class="bt bt-gr">Войти</button>
+                </div>
+
+                <div class="form-signin__help">
+                    <span>Забыли пароль?</span>
+                    <span>Пишите в скайп Чеширу Pmcheshirecat</span>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+<!-- end -->
 

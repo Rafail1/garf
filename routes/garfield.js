@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const fs = require('fs');
 const config = require('../config/config');
 const router = express.Router();
 const needsGroup = require('./../middlewares/needGroups');
@@ -11,16 +12,16 @@ const fileUpload = require('express-fileupload');
 router.post('/addFiles', needsGroup('user'), fileUpload(), function (req, res) {
     try {
         if (!req.files.drive_path || !req.files.orders) {
-            return res.status(400).send('Bad request');
+            return res.status(400).json({error: 'Bad request'});
         }
         const dir = config.USER_UPLOAD_DIR(req.user);
         Task.add(dir, req.files.drive_path, req.files.orders, req.user).then(function (task) {
-            return res.json(task);
+            return res.json({task: {_id:task._id, created:task.created}});
         }, function (error) {
             return res.status(400).json({error: error.message});
         });
     } catch (e) {
-        return res.status(400).send('<h1>Формат не тот</h1>');
+        return res.status(400).json({error: e.message});
     }
 
 });
@@ -31,17 +32,17 @@ router.get('/sms/:taskId/send', needsGroup('user'), function (req, res, next) {
         const oid = new mongoose.Types.ObjectId(req.params.taskId);
         Task.findById(oid, function (err, task) {
             if(err || !task.sms) {
-                return res.status(404).send('not found');
+                return res.status(404).json({error:'Не найдена задача'});
             }
             Sms.findById(task.sms, function (err, sms) {
                 if(err || sms.sended) {
                     if(sms.sended) {
-                        return res.status(500).send('early sended');
+                        return res.status(500).json({error:'Уже отсылались'});
                     }
-                    return res.status(404).send('not found');
+                    return res.status(404).json({error:'Не найдены смс'});
                 }
                 sms.send();
-                res.send("OK");
+                return res.json({status:'ok'});
             })
         });
     } catch (e) {
@@ -50,59 +51,40 @@ router.get('/sms/:taskId/send', needsGroup('user'), function (req, res, next) {
 
 });
 router.get('/orders/:ordersId', needsGroup('user'), function (req, res, next) {
-    const oid = new mongoose.Types.ObjectId(req.params.ordersId);
-    Orders.findById(oid, function (err, orders) {
-        if(err) {
-            return res.status(404).send('not found');
-        }
-        res.json(orders);
-    });
+    const fpath =  Task.getResultOrdersFile(req, req.params.ordersId);
+    if(fs.existsSync(fpath)) {
+        res.download(fpath);
+    } else {
+        return res.status(404).send('not found');
+    }
 });
-router.get('/sms/:smsId', needsGroup('user'), function (req, res, next) {
-    const oid = new mongoose.Types.ObjectId(req.params.smsId);
-    Sms.generateSmsExcel(oid).then(function (fpath) {
+router.get('/sms/:taskId', needsGroup('user'), function (req, res, next) {
+    const oid = new mongoose.Types.ObjectId(req.params.taskId);
+    Sms.generateSmsExcel(req, oid).then(function (fpath) {
         res.download(fpath);
     });
 });
-router.get('/tasks/:taskId', needsGroup('user'), function (req, res, next) {
-    const oid = new mongoose.Types.ObjectId(req.params.taskId);
-    Task.findById(oid, function (err, task) {
-        res.json(task);
-    })
-});
+router.get('/result/:taskId', needsGroup('user'), function (req, res, next) {
+    const fpath =  Task.getResultFile(req, req.params.taskId);
+    if(fs.existsSync(fpath)) {
+        res.download(fpath);
+    } else {
+        return res.status(404).send('not found');
+    }
+
+})
+
 router.get('/', needsGroup('user'), function (req, res, next) {
     const promises = [];
-    promises.push(new Promise(function (resolve, reject) {
-        Sms.paginate({}, { page: 1, limit: 10, sort: { _id: -1 } }, function(err, result) {
-            if(err) {
-                reject(err);
-            }
-            resolve(result.docs);
-        });
-    }));
-    promises.push(new Promise(function (resolve, reject) {
-        Orders.paginate({}, { page: 1, limit: 10, sort: { _id: -1 } }, function(err, result) {
-            if(err) {
-                reject(err);
-            }
-            resolve(result.docs);
-        });
-    }));
-    promises.push(new Promise(function (resolve, reject) {
-        Task.paginate({}, { page: 1, limit: 10, sort: { _id: -1 } }, function(err, result) {
-            if(err) {
-                reject(err);
-            }
-            resolve(result.docs);
-        });
-    }));
-    Promise.all(promises).then(function (arRes) {
-        const results = [];
-        arRes[0].forEach(function (item, key) {
-            results.push({sms:item, order:arRes[1][key], task:arRes[2][key]});
-        });
-        res.render('garfield/index', { title: 'Garfield', results : results });
-    })
+    mongoose.model('Sms').getBalance().then(function (balance) {
+        req.session.balance = balance;
+    });
+    Task.paginate({}, { page: 1, limit: 10, sort: { _id: -1 },  populate: 'sms'}, function(err, result) {
+        if(err) {
+            return res.render('garfield/index', { title: 'Garfield', tasks : [] });
+        }
+        return res.render('garfield/index', { title: 'Garfield', tasks : result.docs });
+    });
 
 });
 

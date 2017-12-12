@@ -1,36 +1,212 @@
-{{#if user}}
-    <h1>{{title}}</h1>
-    <form method="post" action="/garfield/addFiles" enctype="multipart/form-data">
-        <table>
-            <tr>
-                <td><label>файл_который_генерирует_муравьиная</label></td>
-                <td><input type="file" name="drive_path" placeholder="файл_который_генерирует_муравьиная"></td>
-            </tr>
-            <tr>
-                <td><label>Исходный_файл</label></td>
-                <td><input type="file" name="orders" placeholder="Исходный_файл"></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><button>Submit</button></td>
-            </tr>
-        </table>
-    </form>
-{{/if}}
-{{#if results}}
-    <h2>SMS</h2>
-    <ul>
-        {{#each results}}
-            <li>
-                <a href="/garfield/sms/{{this.sms._id}}">{{formatDate this.sms.created "long"}}</a>
-            </li>
-            <li>
-                <a href="/garfield/orders/{{this.order._id}}">{{formatDate this.orders.created "long"}}</a>
-            </li>
-            <li>
-                <a href="/garfield/result/{{this.task._id}}">{{formatDate this.task.created "long"}}</a>
-            </li>
-        {{/each}}
-    </ul>
-{{/if}}
+<!-- service page -->
+<div class="cont">
+    <div class="serv">
+
+        <!-- service send-files form -->
+        <div class="serv__send row">
+            <form method="post" action="/garfield/addFiles" enctype="multipart/form-data" class="form-load col-10">
+                <p class="form-load__title">Загрузите файлы</p>
+
+                <div class="form-load__main">
+                    <div class="row form-load__group">
+                        <div class="col-6">
+                            <span class="form-load__group-title">Логистический сервис (Муравьи)</span>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-load__group-top">
+                                <label class="form-load__label bt bt-fl" for="ants">Выбрать файл</label>
+                                <input class="form-load__input" type="file" name="drive_path" id="ants" required>
+                                <span class="form-load__input-status">Файл не выбран</span>
+                            </div>
+
+                            <div class="form-load__group-foot">
+                                <span class="form-load__input-desc">Файл в формате xlsx</span>
+                                <span class="form-load__input-err">Ошибка в файле, ниже указано в каких строках</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row form-load__group">
+                        <div class="col-6">
+                            <span class="form-load__group-title">Заказы за день</span>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-load__group-top">
+                                <label class="form-load__label bt bt-fl" for="orders">Выбрать файл</label>
+                                <input class="form-load__input" type="file" name="orders" id="orders" required>
+                                <span class="form-load__input-status">Файл не выбран</span>
+                            </div>
+
+                            <div class="form-load__group-foot">
+                                <span class="form-load__input-desc">Файл в формате xlsx</span>
+                                <span class="form-load__input-err">Ошибка в файле, ниже указано в каких строках</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-load__foot">
+                    <div class="row justify-content-end">
+                        <div class="col-6">
+
+
+                            <button type="submit" class="bt bt-bl">
+                                <div class="spinner">
+                                    <div class="cube1"></div>
+                                    <div class="cube2"></div>
+                                </div>
+                                <span class="btn-text">Загрузить</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <!-- end -->
+        <!-- service  send errors -->
+        <div class="serv__errors hidden">
+            <div class="errors">
+                <p class="errors__title">Ошибки</p>
+
+                <ul class="errors__list">
+                    <li id="errors__item" class="errors__item"></li>
+                </ul>
+
+            </div>
+        </div>
+        <!-- end -->
+        <!-- service send resulr -->
+        <div class="serv__result row">
+            <div class="results col-11">
+                <p class="results__title">Итоговые файлы</p>
+                <table class="table results__table">
+                    <thead class="results__table-head">
+                    <tr>
+                        <th>Время 1</th>
+                        <th>Дата</th>
+                        <th>Общий файл</th>
+                        <th>СМС файл</th>
+                        <th>Курьеры</th>
+                        <th>Экспорт в СМС</th>
+                    </tr>
+                    </thead>
+                    <tbody class="results__table-body">
+                    {{#each tasks}}
+
+                        <tr class="results__table-offset">
+                            <td></td>
+                        </tr>
+
+                        <tr class="{{#if this.sms.sended}}send{{else}}new{{/if}}">
+                            <td>{{formatDate this.created "time"}}</td>
+                            <td>{{formatDate this.created "short"}}</td>
+                            <td>
+                                <a class="results__table-download" href="/garfield/result/{{this._id}}"
+                                   download>{{formatDate this.created "long"}}</a>
+                            </td>
+                            <td>
+                                <a class="results__table-download" href="/garfield/sms/{{this.id}}"
+                                   download>{{formatDate this.created "long"}}</a>
+
+                            <td>
+                                <a class="results__table-download" href="/garfield/orders/{{this._id}}"
+                                   download>{{formatDate this.created "long"}}</a></td>
+                            </td>
+                            <td>
+                                {{#if this.sms.sended}}
+                                    <span class="results__table-status">Отправлено</span>
+                                {{else}}
+                                    <a href="/garfield/sms/{{this.id}}/send" class="results__table-send">Отправить</a>
+                                {{/if}}
+                            </td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+                <div class="row justify-content-center p-pl">
+                    <ul class="pagination">
+
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        <!-- end -->
+
+    </div>
+</div>
+<!-- end -->
+<script src="/javascripts/jquery.twbsPagination.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+    let sending = false;
+    $('form').on('submit', addTask);
+    $('input[type=file]').change(function (e) {
+        if(e.target.files[0]) {
+            $(this).closest('div').find('.form-load__input-status').text(e.target.files[0].name);
+        } else {
+            $(this).closest('div').find('.form-load__input-status').text('Файл не выбран');
+        }
+    });
+    function addTask(event) {
+        event.preventDefault();
+        if (!sending) {
+            sending = true;
+        } else {
+            return;
+        }
+
+        const _that = $(this);
+        _that.find('[type="submit"]').addClass('loader');
+
+        const formData = new FormData();
+        const ants = document.getElementById('ants').files;
+        const orders = document.getElementById('orders').files;
+        formData.append('drive_path', ants[0], ants[0].name);
+        formData.append('orders', orders[0], orders[0].name);
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('POST', $(event.target).attr('action'), true);
+        xhr.onload = function (res) {
+            sending = false;
+            _that.find('[type="submit"]').removeClass('loader');
+            if (xhr.status === 200) {
+                window.location.reload();
+            } else {
+                try {
+                    let response = JSON.parse(res.target.response);
+                    $("#errors__item").text(response.error);
+                    $(".serv__errors").removeClass('hidden');
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        };
+        xhr.send(formData);
+    }
+
+    $(".results__table-send").click(function (e) {
+        e.preventDefault();
+        const _that = $(this);
+        _that.addClass('loader');
+        const href = $(this).attr('href');
+        $.ajax({
+            url: href,
+            dataType: 'json',
+            success: function (response) {
+                _that.removeClass('loader');
+                _that.closest('tr').removeClass('new').addClass('send');
+                _that.closest('td').html('<span class="results__table-status">Отправлено</span>');
+            },
+            error: function (response) {
+                _that.removeClass('loading');
+                _that.addClass('error');
+                _that.text('Повторить');
+            }
+        })
+    })
+
+
+</script>
 
