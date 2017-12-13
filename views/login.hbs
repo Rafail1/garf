@@ -11,12 +11,12 @@
 
                 <div class="form-signin__group">
                     <label for="inputLogin">Логин</label>
-                    <input class="form-control ok" type="text" name="username" id="inputLogin" required>
+                    <input class="form-control " type="text" name="username" id="inputLogin" required>
                 </div>
 
                 <div class="form-signin__group">
                     <label for="inputPassword">Пароль</label>
-                    <input class="form-control er" type='password' name="password" id="inputPassword" required>
+                    <input class="form-control " type='password' name="password" id="inputPassword" required>
                 </div>
 
                 <div class="form-signin__group">
@@ -52,5 +52,21 @@
 
     </div>
 </div>
+<script>
+    $(".form-signin").submit(function(e){
+        e.preventDefault();
+        $.ajax({
+            url:$(this).attr('action'),
+            data:$(this).serialize(),
+            type:'post',
+            success:function(res) {
+                window.location.reload();
+            },
+            error:function(res) {
+                $("#inputPassword").addClass('er');
+            }
+        })
+    })
+</script>
 <!-- end -->
 

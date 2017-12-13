@@ -119,9 +119,10 @@ TaskSchema.statics.checkOrdersFormat = function (orders) {
         let n = orders.records[0][i][PhoneOrderD];
         let itog = orders.records[0][i][ItogOrderD];
         let itogValue = orders.records[0][i][ItogOrderValueD];
-        if (i > 0 && typeof n !== 'undefined' && n.trim().length) {
+        let numI = parseInt(i);
+        if (numI > 0 && typeof n !== 'undefined' && n.trim().length) {
             if (orderStarted) {
-                throw new Error('Ошибка в файле заказов, не нашёл итоговой суммы заказа на строке ' + i - 1);
+                throw new Error('Ошибка в файле заказов, не нашёл итоговой суммы заказа на строке ' + (numI - 1));
             }
             orderStarted = true;
         }
@@ -131,7 +132,7 @@ TaskSchema.statics.checkOrdersFormat = function (orders) {
                 itogValue = itogValue.trim().toLowerCase();
                 if (itogValue !== 'оплачено' && itogValue !== 'на выбор') {
                     if (MyHelper.numberize(itogValue) === '') {
-                        throw new Error('Ошибка в файле заказов в ячейке суммы заказа на строке ' + i)
+                        throw new Error('Ошибка в файле заказов в ячейке суммы заказа на строке ' + numI)
                     }
                 }
             }

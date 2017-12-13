@@ -32,5 +32,18 @@
     "xlsx-style": "^0.8.13",
     "xlsx-workbook": "^1.0.3",
     "xml2js": "^0.4.19"
-  }
+  },
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rafail1/garf.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rafail1/garf/issues"
+  },
+  "homepage": "https://github.com/Rafail1/garf#readme",
+  "description": ""
 }

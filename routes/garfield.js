@@ -41,7 +41,7 @@ router.get('/sms/:taskId/send', needsGroup('user'), function (req, res, next) {
                     }
                     return res.status(404).json({error:'Не найдены смс'});
                 }
-                sms.send();
+               sms.send();
                 return res.json({status:'ok'});
             })
         });
@@ -83,7 +83,9 @@ router.get('/', needsGroup('user'), function (req, res, next) {
         if(err) {
             return res.render('garfield/index', { title: 'Garfield', tasks : [] });
         }
-        return res.render('garfield/index', { title: 'Garfield', tasks : result.docs });
+        return res.render('garfield/index', { title: 'Garfield', tasks : JSON.stringify(result.docs.map(function (item) {
+            return {_id:item._id, created:item.created, sms:{sended: item.sms && item.sms.sended}}
+        })) });
     });
 
 });

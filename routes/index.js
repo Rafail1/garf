@@ -28,7 +28,11 @@ router.post('/register', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
-    res.render('login');
+    if(req.user) {
+        res.redirect('/');
+    } else {
+        res.render('login');
+    }
 });
 
 router.post('/login', passport.authenticate('local'), function(req, res) {

@@ -466,57 +466,17 @@ a:hover {
 .error {
   color: red !important;
 }
+.bt.loader {
+  animation: loader 1s infinite linear;
+  background-size: 40px 40px;
+  background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.3) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.3) 75%, transparent 75%, transparent); }
 
-
-.loader .spinner {
-  display: block;
-}
-.spinner {
-  display: none;
-  position: absolute;
-  top: 3px;
-  right: 40px;
-}
-
-.cube1, .cube2 {
-  background-color: #333;
-  width: 15px;
-  height: 15px;
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  -webkit-animation: sk-cubemove 1.8s infinite ease-in-out;
-  animation: sk-cubemove 1.8s infinite ease-in-out;
-}
-
-.cube2 {
-  -webkit-animation-delay: -0.9s;
-  animation-delay: -0.9s;
-}
-
-@-webkit-keyframes sk-cubemove {
-  25% { -webkit-transform: translateX(21px) rotate(-90deg) scale(0.5) }
-  50% { -webkit-transform: translateX(21px) translateY(21px) rotate(-180deg) }
-  75% { -webkit-transform: translateX(0px) translateY(21px) rotate(-270deg) scale(0.5) }
-  100% { -webkit-transform: rotate(-360deg) }
-}
-
-@keyframes sk-cubemove {
-  25% {
-    transform: translateX(21px) rotate(-90deg) scale(0.5);
-    -webkit-transform: translateX(21px) rotate(-90deg) scale(0.5);
-  } 50% {
-      transform: translateX(21px) translateY(21px) rotate(-179deg);
-      -webkit-transform: translateX(21px) translateY(21px) rotate(-179deg);
-    } 50.1% {
-        transform: translateX(21px) translateY(21px) rotate(-180deg);
-        -webkit-transform: translateX(21px) translateY(21px) rotate(-180deg);
-      } 75% {
-          transform: translateX(0px) translateY(21px) rotate(-270deg) scale(0.5);
-          -webkit-transform: translateX(0px) translateY(21px) rotate(-270deg) scale(0.5);
-        } 100% {
-            transform: rotate(-360deg);
-            -webkit-transform: rotate(-360deg);
-          }
-}
+@keyframes loader {
+  0% {
+    background-position: 0 0; }
+  100% {
+    background-position: 40px 0px; } }
+.logo a {
+  color: #164f83;
+  cursor: pointer;
+  display: inline-block; }

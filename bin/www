@@ -22,7 +22,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '3002');
 var mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongodb.uri, {useMongoClient: true});

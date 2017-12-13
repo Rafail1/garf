@@ -21,7 +21,6 @@
 
                             <div class="form-load__group-foot">
                                 <span class="form-load__input-desc">Файл в формате xlsx</span>
-                                <span class="form-load__input-err">Ошибка в файле, ниже указано в каких строках</span>
                             </div>
                         </div>
                     </div>
@@ -48,13 +47,7 @@
                 <div class="form-load__foot">
                     <div class="row justify-content-end">
                         <div class="col-6">
-
-
                             <button type="submit" class="bt bt-bl">
-                                <div class="spinner">
-                                    <div class="cube1"></div>
-                                    <div class="cube2"></div>
-                                </div>
                                 <span class="btn-text">Загрузить</span>
                             </button>
                         </div>
@@ -80,6 +73,7 @@
         <div class="serv__result row">
             <div class="results col-11">
                 <p class="results__title">Итоговые файлы</p>
+
                 <table class="table results__table">
                     <thead class="results__table-head">
                     <tr>
@@ -91,37 +85,8 @@
                         <th>Экспорт в СМС</th>
                     </tr>
                     </thead>
-                    <tbody class="results__table-body">
-                    {{#each tasks}}
+                    <tbody class="results__table-body" id="results">
 
-                        <tr class="results__table-offset">
-                            <td></td>
-                        </tr>
-
-                        <tr class="{{#if this.sms.sended}}send{{else}}new{{/if}}">
-                            <td>{{formatDate this.created "time"}}</td>
-                            <td>{{formatDate this.created "short"}}</td>
-                            <td>
-                                <a class="results__table-download" href="/garfield/result/{{this._id}}"
-                                   download>{{formatDate this.created "long"}}</a>
-                            </td>
-                            <td>
-                                <a class="results__table-download" href="/garfield/sms/{{this.id}}"
-                                   download>{{formatDate this.created "long"}}</a>
-
-                            <td>
-                                <a class="results__table-download" href="/garfield/orders/{{this._id}}"
-                                   download>{{formatDate this.created "long"}}</a></td>
-                            </td>
-                            <td>
-                                {{#if this.sms.sended}}
-                                    <span class="results__table-status">Отправлено</span>
-                                {{else}}
-                                    <a href="/garfield/sms/{{this.id}}/send" class="results__table-send">Отправить</a>
-                                {{/if}}
-                            </td>
-                        </tr>
-                    {{/each}}
                     </tbody>
                 </table>
                 <div class="row justify-content-center p-pl">
@@ -137,18 +102,149 @@
     </div>
 </div>
 <!-- end -->
+<script id="resultsTpl" type="text/x-handlebars-template">
+    \{{#each tasks}}
+    <tr class="results__table-offset">
+        <td></td>
+    </tr>
+
+    <tr class="\{{#if this.sms.sended}}send\{{else}}new\{{/if}}">
+        <td>\{{formatDate this.created "time"}}</td>
+        <td>\{{formatDate this.created "short"}}</td>
+        <td>
+            <a class="results__table-download" href="/garfield/result/\{{this._id}}"
+               download>\{{formatDate this.created "long"}}</a>
+        </td>
+        <td>
+            <a class="results__table-download" href="/garfield/sms/\{{this._id}}"
+               download>\{{formatDate this.created "long"}}</a>
+
+        <td>
+            <a class="results__table-download" href="/garfield/orders/\{{this._id}}"
+               download>\{{formatDate this.created "long"}}</a></td>
+        </td>
+        <td>
+            \{{#if this.sms.sended}}
+            <span class="results__table-status">Отправлено</span>
+            \{{else}}
+            <a href="/garfield/sms/\{{this._id}}/send" data-id="\{{this._id}}"
+               class="results__table-send">Отправить</a>
+            \{{/if}}
+        </td>
+    </tr>
+    \{{/each}}
+    <tr class="results__table-offset">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+</script>
+
+<script src="https://momentjs.com/downloads/moment.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.4/locale/ru.js" type="text/javascript"></script>
 <script src="/javascripts/jquery.twbsPagination.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/javascripts/handlebars.min-latest.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
-    let sending = false;
-    $('form').on('submit', addTask);
-    $('input[type=file]').change(function (e) {
-        if(e.target.files[0]) {
-            $(this).closest('div').find('.form-load__input-status').text(e.target.files[0].name);
-        } else {
-            $(this).closest('div').find('.form-load__input-status').text('Файл не выбран');
+    moment.locale('ru');
+    const DateFormats = {
+        time: "HH:mm",
+        short: "DD MMMM - YYYY",
+        long: "DD.MM.YYYY HH:mm"
+    };
+    Handlebars.registerHelper('formatDate', function (date, format) {
+        const mmnt = moment(date).utcOffset(3);
+        return mmnt.format(DateFormats[format]);
+    });
+    const template = document.getElementById('resultsTpl').innerHTML;
+    const renderResult = Handlebars.compile(template);
+    const tasks = JSON.parse('{{{tasks}}}');
+    render(tasks, 1);
+
+    $('.p-pl .pagination').twbsPagination({
+        totalPages: Math.ceil(tasks.length / 5),   // 5 - paremetr "rows of table"
+        visiblePages: 5,
+        startPage: 1,
+        hideOnlyOnePage: true,
+        prev: '&larr;',
+        next: '&rarr;',
+        first: '',
+        last: '',
+        nextClass: 'pagination__item pagination__next',
+        prevClass: 'pagination__item pagination__prev',
+        pageClass: 'pagination__item',
+        anchorClass: 'pagination__link',
+        onPageClick: function (event, page) {
+            render(tasks, page);
         }
     });
+
+    function render(data, page) {
+        const tasks = data.slice((page - 1) * 5, ((page - 1) * 5) + 5);
+        document.getElementById('results').innerHTML = renderResult({tasks: tasks});
+        $(".results__table-send").click(function (e) {
+            e.preventDefault();
+            const _that = $(this);
+            _that.addClass('loader');
+            const href = $(this).attr('href');
+            const task = tasks.find(function(item) {
+                return item._id === _that.attr('data-id');
+            });
+            console.log(task);
+            $.ajax({
+                url: href,
+                dataType: 'json',
+                success: function (response) {
+                    task.sms.sended = true;
+                    _that.removeClass('loader');
+                    _that.closest('tr').removeClass('new').addClass('send');
+                    _that.closest('td').html('<span class="results__table-status">Отправлено</span>');
+                },
+                error: function (response) {
+                    _that.removeClass('loading');
+                    _that.addClass('error');
+                    _that.text('Повторить');
+                }
+            })
+        })
+    }
+    (function () {
+        var inputs = document.querySelectorAll('input[type="file"]');
+
+        Array.prototype.forEach.call(inputs, function (input) {
+            var statusNode = input.nextElementSibling,
+                    statusHtml = statusNode.innerHTML,
+                    labelNode = input.previousElementSibling;
+
+            input.addEventListener('change', function () {
+                if (this.files && this.files.length > 0) {
+                    var name = this.files[0].name;
+
+                    if (name.length > 28)
+                        fileName = name.substr(0, 17) + '...' + name.substr(name.length - 8, 8);
+                    else
+                        fileName = this.files[0].name;
+
+                    labelNode.classList.add('ok');
+                    statusNode.style.color = '#2a965d';
+                }
+                else {
+                    fileName = statusHtml;
+
+                    labelNode.classList.remove('ok');
+                    statusNode.style.color = '';
+                }
+
+                statusNode.innerHTML = fileName;
+            })
+        })
+    })()
+    let sending = false;
+    $('form').on('submit', addTask);
+
     function addTask(event) {
         event.preventDefault();
         if (!sending) {
@@ -176,6 +272,7 @@
             } else {
                 try {
                     let response = JSON.parse(res.target.response);
+                    $(".form-load__input-err").show();
                     $("#errors__item").text(response.error);
                     $(".serv__errors").removeClass('hidden');
                 } catch (e) {
@@ -185,27 +282,6 @@
         };
         xhr.send(formData);
     }
-
-    $(".results__table-send").click(function (e) {
-        e.preventDefault();
-        const _that = $(this);
-        _that.addClass('loader');
-        const href = $(this).attr('href');
-        $.ajax({
-            url: href,
-            dataType: 'json',
-            success: function (response) {
-                _that.removeClass('loader');
-                _that.closest('tr').removeClass('new').addClass('send');
-                _that.closest('td').html('<span class="results__table-status">Отправлено</span>');
-            },
-            error: function (response) {
-                _that.removeClass('loading');
-                _that.addClass('error');
-                _that.text('Повторить');
-            }
-        })
-    })
 
 
 </script>

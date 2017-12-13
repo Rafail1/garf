@@ -12,7 +12,7 @@ module.exports = {
         return __dirname + `/../uploads/${user._id}`;
     },
     mongodb: {
-        uri: "mongodb://localhost:27017/garf"
+        uri: "mongodb://localhost:27017/garfTest"
     },
     session: {
         secret:'rafa'
