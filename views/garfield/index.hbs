@@ -15,7 +15,7 @@
                         <div class="col-6">
                             <div class="form-load__group-top">
                                 <label class="form-load__label bt bt-fl" for="ants">Выбрать файл</label>
-                                <input class="form-load__input" type="file" name="drive_path" id="ants" required>
+                                <input class="form-load__input" type="file" accept=".xlsx"  name="drive_path" id="ants" required>
                                 <span class="form-load__input-status">Файл не выбран</span>
                             </div>
 
@@ -32,7 +32,7 @@
                         <div class="col-6">
                             <div class="form-load__group-top">
                                 <label class="form-load__label bt bt-fl" for="orders">Выбрать файл</label>
-                                <input class="form-load__input" type="file" name="orders" id="orders" required>
+                                <input class="form-load__input" type="file" accept=".xlsx" name="orders" id="orders" required>
                                 <span class="form-load__input-status">Файл не выбран</span>
                             </div>
 
@@ -77,7 +77,7 @@
                 <table class="table results__table">
                     <thead class="results__table-head">
                     <tr>
-                        <th>Время 1</th>
+                        <th>Время</th>
                         <th>Дата</th>
                         <th>Общий файл</th>
                         <th>СМС файл</th>
@@ -103,12 +103,20 @@
 </div>
 <!-- end -->
 <script id="resultsTpl" type="text/x-handlebars-template">
-    \{{#each tasks}}
     <tr class="results__table-offset">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    \{{#each tasks}}
+    <tr class="results__tableitem-offset">
         <td></td>
     </tr>
 
-    <tr class="\{{#if this.sms.sended}}send\{{else}}new\{{/if}}">
+    <tr class="\{{#if this.new}}new\{{else}}\{{#if this.sms.sended}}send\{{else}}nosend\{{/if}}\{{/if}}">
         <td>\{{formatDate this.created "time"}}</td>
         <td>\{{formatDate this.created "short"}}</td>
         <td>
@@ -149,6 +157,7 @@
 <script src="/javascripts/handlebars.min-latest.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
+    const pageSize = 30;
     moment.locale('ru');
     const DateFormats = {
         time: "HH:mm",
@@ -162,11 +171,11 @@
     const template = document.getElementById('resultsTpl').innerHTML;
     const renderResult = Handlebars.compile(template);
     const tasks = JSON.parse('{{{tasks}}}');
-    render(tasks, 1);
+    tasks[0]['new'] = !tasks[0]['sms']['sended'];
 
     $('.p-pl .pagination').twbsPagination({
-        totalPages: Math.ceil(tasks.length / 5),   // 5 - paremetr "rows of table"
-        visiblePages: 5,
+        totalPages: Math.ceil(tasks.length / pageSize),
+        visiblePages: pageSize,
         startPage: 1,
         hideOnlyOnePage: true,
         prev: '&larr;',
@@ -183,7 +192,8 @@
     });
 
     function render(data, page) {
-        const tasks = data.slice((page - 1) * 5, ((page - 1) * 5) + 5);
+        const tasks = data.slice((page - 1) * pageSize, ((page - 1) * pageSize) + pageSize);
+        console.log(tasks);
         document.getElementById('results').innerHTML = renderResult({tasks: tasks});
         $(".results__table-send").click(function (e) {
             e.preventDefault();
@@ -193,7 +203,6 @@
             const task = tasks.find(function(item) {
                 return item._id === _that.attr('data-id');
             });
-            console.log(task);
             $.ajax({
                 url: href,
                 dataType: 'json',

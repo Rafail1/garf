@@ -1,0 +1,20 @@
+5447:C 18 Dec 06:46:13.081 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+5447:C 18 Dec 06:46:13.081 # Redis version=4.0.2, bits=64, commit=a7d7794c, modified=1, pid=5447, just started
+5447:C 18 Dec 06:46:13.081 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+5447:M 18 Dec 06:46:13.082 * Running mode=standalone, port=6379.
+5447:M 18 Dec 06:46:13.082 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+5447:M 18 Dec 06:46:13.082 # Server initialized
+5447:M 18 Dec 06:46:13.082 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+5447:M 18 Dec 06:46:13.082 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+5447:M 18 Dec 06:46:13.083 * DB loaded from disk: 0.000 seconds
+5447:M 18 Dec 06:46:13.083 * Ready to accept connections
+5447:M 18 Dec 07:02:23.051 * 100 changes in 300 seconds. Saving...
+5447:M 18 Dec 07:02:23.051 * Background saving started by pid 5852
+5852:C 18 Dec 07:02:23.057 * DB saved on disk
+5852:C 18 Dec 07:02:23.057 * RDB: 0 MB of memory used by copy-on-write
+5447:M 18 Dec 07:02:23.152 * Background saving terminated with success
+5447:signal-handler (1513599318) Received SIGTERM scheduling shutdown...
+5447:M 18 Dec 07:15:18.340 # User requested shutdown...
+5447:M 18 Dec 07:15:18.340 * Saving the final RDB snapshot before exiting.
+5447:M 18 Dec 07:15:18.348 * DB saved on disk
+5447:M 18 Dec 07:15:18.348 # Redis is now ready to exit, bye bye...

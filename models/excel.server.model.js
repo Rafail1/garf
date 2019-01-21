@@ -18,7 +18,11 @@ excelSchema.statics.sheet2arr = function (worksheet) {
         const r = [];
 
         row.eachCell({includeEmpty: true}, function (cell, colNumber) {
-            r[colNumber - 1] = cell.text;
+            if(cell.type === ExcelJs.ValueType.Date) {
+                r[colNumber - 1] = cell.value;
+            } else {
+                r[colNumber - 1] = cell.text;
+            }
         });
         result.push(r);
     });

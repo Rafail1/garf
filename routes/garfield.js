@@ -64,6 +64,11 @@ router.get('/sms/:taskId', needsGroup('user'), function (req, res, next) {
         res.download(fpath);
     });
 });
+router.get('/watch/:taskId', needsGroup('user'), function (req, res, next) {
+    Task.findById(req.params.taskId, function (err, task) {
+        res.json(task);
+    })
+})
 router.get('/result/:taskId', needsGroup('user'), function (req, res, next) {
     const fpath =  Task.getResultFile(req, req.params.taskId);
     if(fs.existsSync(fpath)) {
@@ -77,9 +82,9 @@ router.get('/result/:taskId', needsGroup('user'), function (req, res, next) {
 router.get('/', needsGroup('user'), function (req, res, next) {
     const promises = [];
     mongoose.model('Sms').getBalance().then(function (balance) {
-        req.session.balance = balance;
+        req.session.balance = balance.toString().replace(".", ",");
     });
-    Task.paginate({}, { page: 1, limit: 10, sort: { _id: -1 },  populate: 'sms'}, function(err, result) {
+    Task.paginate({}, { page: 1, limit: 1000, sort: { _id: -1 },  populate: 'sms'}, function(err, result) {
         if(err) {
             return res.render('garfield/index', { title: 'Garfield', tasks : [] });
         }

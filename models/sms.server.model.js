@@ -126,7 +126,7 @@ SmsSchema.statics.add = function (excel) {
     const records = [];
     const _that = this;
     const source = "{{#if name}}{{name}}, {{/if}}" +
-        "Ваш заказ у курьера, его привезет {{curierName}} с 18:30 до 22:00{{#if curierPhone}}, тел. {{curierPhone}}{{/if}}. " +
+        "Ваш заказ у курьера, его привезет {{curierName}} {{#if curierPhone}}, тел. {{curierPhone}}{{/if}}. " +
         "{{#if summ}}Сумма к оплате: {{summ}} руб.{{/if}} С уважением, зоомагазин Garfield.by";
     const template = Handlebars.compile(source);
 
@@ -170,7 +170,7 @@ SmsSchema.statics.add = function (excel) {
                     if (typeof row[ItogCell] === 'string' && row[ItogCell].trim().toLowerCase() === 'итого') {
                         const sumCellValue = row[SummCell];
                         if (MyHelper.numberize(sumCellValue).length) {
-                            order['summ'] = sumCellValue;
+                            order['summ'] = Math.round(sumCellValue * 100) / 100;
                         }
                         order['message'] = template(order);
                         records.push(order);

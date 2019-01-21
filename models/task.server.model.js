@@ -126,7 +126,7 @@ TaskSchema.statics.checkOrdersFormat = function (orders) {
             }
             orderStarted = true;
         }
-        if (itog !== null && typeof itog !== 'undefined'
+        if (itog !== null && typeof itog === 'string'
             && itog.toLowerCase().trim() === ItogOrderText) {
             if (!MyHelper.isEmpty(itogValue)) {
                 itogValue = itogValue.trim().toLowerCase();
@@ -211,7 +211,7 @@ TaskSchema.methods.process = function (fileDir, fname) {
         }
         const NumberD = 0;
         const NumberO = 0;
-        const PhoneCurierD = 12;
+        const PhoneCurierD = 16;
         for (const i in _that.curiers.records[0]) {
             let orderN = 1;
             resultShared.addRow(_that.curiers.records[0][i]);
@@ -219,17 +219,21 @@ TaskSchema.methods.process = function (fileDir, fname) {
                 continue;
             }
             const resSheet = resultWorkbook.addWorksheet("№" + i);
-
+            resSheet.getColumn(6).numFmt = 'h:mm';
+            resSheet.getColumn(5).numFmt = 'h:mm';
+            let addedRowNum = 0;
             const curierSheet = _that.drivePath.records[_that.curiers.records[0][i][NumberD] - 1];
             for (const j in curierSheet) {
-                if (j > 0 && curierSheet[j][PhoneCurierD] && MyHelper.numberize(curierSheet[j][PhoneCurierD]).length) {
-                    const rowsFromOrder = PhonesMap[MyHelper.numberize(curierSheet[j][PhoneCurierD])];
+                const digNumberPhone = MyHelper.numberize(curierSheet[j][PhoneCurierD]);
+                if (j > 0 && digNumberPhone && digNumberPhone.length) {
+                    const rowsFromOrder = PhonesMap[digNumberPhone];
                     if (rowsFromOrder && rowsFromOrder.length) {
                         rowsFromOrder.forEach(function (rowNum) {
                             _that.orders.records[0][rowNum][NumberO] = orderN++;
                             do {
                                 resSheet.addRow(_that.orders.records[0][rowNum]);
-
+                                const cell = resSheet.getCell(`C${addedRowNum++}`);
+                                cell.font = { name: 'Calibri', family: 4, size: 16, bold: true };
                                 rowNum++;
                                 if (typeof _that.orders.records[0][rowNum] === 'undefined' ||
                                     (typeof _that.orders.records[0][rowNum][PhoneOrderD] !== 'undefined' &&
@@ -271,7 +275,7 @@ TaskSchema.methods.process = function (fileDir, fname) {
                             ['ЗООМАГАЗИН  “GARFIELD”'],
                             ['', moment().format('DD MMMM YYYY')],
                             ['Адрес магазина: Минск, пр. Независимости, 44', '', 'ТЕЛЕФОНЫ'],
-                            ['Время работы:     пн.-пт.: c 10-00 до 21-00     сб-вс. : и с 10-00 до 20-00'],
+                            ['Время работы:     пн.-пт.: c 10-00 до 21-00     сб-вс. : с 10-00 до 20-00'],
                             ['Сайт:   www.garfield.by','','8 (033) 901-18-31'],
                             ['E-mail:   zoogarfield@gmail.com','','8 (044) 579-30-46'],
                             ['ТЕЛЕФОН', 'АДРЕС ДОСТАВКИ', 'НАИМЕНОВАНИЕ ТОВАРА', 'ЦЕНА']
@@ -394,10 +398,10 @@ TaskSchema.methods.process = function (fileDir, fname) {
                     {width: 4},
                     {width: 12},
                     {width: 20},
-                    {width: 25},
+                    {width: 35},
                     {width: 8},
-                    {width: 8},
-                    {width: 54},
+                    {width: 15},
+                    {width: 75},
                     {width: 8},
                     {width: 8}
                 ];
@@ -409,7 +413,14 @@ TaskSchema.methods.process = function (fileDir, fname) {
                             row.getCell(colNumber + 1).font = {bold: true};
                             cell.font = {bold: true};
                         }
-                        cell.alignment = {wrapText: true};
+                        if(colNumber === 3) {
+                            cell.font = { name: 'Calibri', family: 1, size: 12, bold: true };
+                        }
+                        if(colNumber === 6) {
+                            cell.alignment = { vertical: 'middle', horizontal: 'center' , wrapText: true};
+                        } else {
+                            cell.alignment = {wrapText: true};
+                        }
                     });
                 });
             }

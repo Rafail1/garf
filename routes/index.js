@@ -37,7 +37,7 @@ router.get('/login', function(req, res) {
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
     mongoose.model('Sms').getBalance().then(function (balance) {
-        req.session.balance = balance;
+        req.session.balance = balance.toString().replace(".", ",");;
         res.redirect('/');
     })
 });
